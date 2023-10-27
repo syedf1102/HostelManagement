@@ -5,9 +5,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.modelmapper.ModelMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +22,6 @@ import com.tw.convertor.UserAddCovertor;
 import com.tw.convertor.UserDtoAutoConvertor;
 import com.tw.convertor.UserDtoConvertor;
 import com.tw.dto.PageDto;
-//import com.tw.dto.PageDto;
 import com.tw.dto.UserAddDto;
 import com.tw.dto.UserDto;
 import com.tw.dto.UserEditDto;
@@ -54,27 +54,6 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RoleRepository roleRepository;
 
-	@Autowired
-	ModelMapper modelMapper;
-
-//	@Override
-//	public ResponseEntity<?> authenticationUser(AuthenticationRequest authenticationRequest) {
-//		try {
-//			final Authentication authentication = this.authenticationManager
-//					.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
-//							authenticationRequest.getPassword()));
-//			SecurityContextHolder.getContext().setAuthentication(authentication);
-//			final SecureUser secureUser = (SecureUser) authentication.getPrincipal();
-//			final String token = this.tokenUtils.generateObjectToken(secureUser);
-//			// Return the token;
-//
-//			return ResponseEntity.ok(new AuthenticationResponse(token, secureUser.getId(), secureUser.getName(),
-//					secureUser.getAuthorities()));
-//		} catch (DisabledException e) {
-//			return new ResponseEntity<>(HttpStatus.LOCKED);
-//		}
-//	}
-
 	@Override
 	public Page<User> userList(Pageable pageable) {
 		return userRepository.findAll(pageable);
@@ -102,14 +81,6 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(dto.getPassword());
 		user.setCreated(Calendar.getInstance());
 		user.setModified(Calendar.getInstance());
-		
-		// user.setAddress(dto.getAddress());
-		// user.setBloodGroup(dto.getBloodGroup());
-		// user.setDateOfBirth(dto.getDateOfBirth());
-		// user.setGender(dto.getGender());
-		// user.setCity(dto.getCity());
-		// user.setState(dto.getState());
-		// user.setQualification(dto.getQualification());
 
 		userRepository.save(user);
 
@@ -218,7 +189,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ResponseEntity<?> getDataById(Long id) {
 		User user = userRepository.getOne(id);
-		UserAddDto dto = modelMapper.map(user, UserAddDto.class);
+		UserAddDto dto = new UserAddDto();
+		BeanUtils.copyProperties(user, dto);
 		return Response.build(Code.OK, dto);
 	}
 
