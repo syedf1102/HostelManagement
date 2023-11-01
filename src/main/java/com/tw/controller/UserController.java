@@ -2,6 +2,7 @@ package com.tw.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,8 @@ import com.tw.dto.UserSpecDto;
 import com.tw.exception.UserAlreadyExistsException;
 import com.tw.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.websocket.server.PathParam;
 
 @RestController
@@ -47,6 +50,7 @@ public class UserController {
 	}
 
 	@PostMapping(value = "list")
+	@Operation(summary = "My endpoint", security = @SecurityRequirement(name = "bearerAuth"))
 	public ResponseEntity<?> listUser(@RequestBody UserSpecDto dto) {
 		return userService.listUser(dto);
 
