@@ -2,6 +2,7 @@ package com.tw.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +19,15 @@ import com.tw.exception.UserAlreadyExistsException;
 import com.tw.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.websocket.server.PathParam;
 
+@ApiResponse
 @RestController
 @RequestMapping("/rest/api/user/")
+@SecurityRequirements(value = { @SecurityRequirement(name = "bearerAuth") })
 @CrossOrigin
 public class UserController {
 
@@ -49,14 +54,19 @@ public class UserController {
 		return userService.deactivateUser(id);
 	}
 
+	// @Operation(summary = "My endpoint", security = @SecurityRequirement(name =
+	// "bearerAuth"))
 	@PostMapping(value = "list")
-	@Operation(summary = "My endpoint", security = @SecurityRequirement(name = "bearerAuth"))
+	@PostAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public ResponseEntity<?> listUser(@RequestBody UserSpecDto dto) {
 		return userService.listUser(dto);
 
 	}
 
-	@GetMapping(value = "findAll")
+	// @Operation(summary = "Get a protected resource", description = "Retrieve a
+	// protected resource that requires Bearer Token (JWT) authentication.")
+	// @SecurityRequirement(name = "Bearer Authentication")
+	// @GetMapping(value = "findAll")
 	public ResponseEntity<?> findAll() {
 		return userService.findAll();
 
