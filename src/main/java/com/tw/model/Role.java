@@ -1,15 +1,20 @@
 package com.tw.model;
 
+import com.tw.generics.AbstractPersistable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-
-import com.tw.generics.AbstractPersistable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
  * Application Role
  */
-
+ @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "role")
 public class Role extends AbstractPersistable {
@@ -19,19 +24,6 @@ public class Role extends AbstractPersistable {
 	@Column(name = "role", nullable = false)
 	private String role;
 	
-	public Role() {
-		super();
-	}
-	public Role(String role) {
-		super();
-		this.role = role;
-	}
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
-		this.role = role;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

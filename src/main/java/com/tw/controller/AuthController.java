@@ -1,8 +1,7 @@
 package com.tw.controller;
 
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +17,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tw.enums.ERole;
-import com.tw.model.RoleLogin;
-import com.tw.model.UserLogin;
-import com.tw.repository.RoleLoginRepository;
-import com.tw.repository.UserLoginRepository;
+import com.tw.model.Role;
+import com.tw.model.User;
+import com.tw.repository.RoleRepository;
+import com.tw.repository.UserRepository;
 import com.tw.request.LoginRequest;
 import com.tw.request.SignupRequest;
 import com.tw.response.JwtResponse;
 import com.tw.response.MessageResponse;
 import com.tw.security.JwtUtils;
 import com.tw.serviceImpl.UserDetailsImpl;
+
 import jakarta.validation.Valid;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -39,10 +38,10 @@ public class AuthController {
 	AuthenticationManager authenticationManager;
 
 	@Autowired
-	UserLoginRepository userRepository;
+	UserRepository userRepository;
 
 	@Autowired
-	RoleLoginRepository roleRepository;
+	RoleRepository roleRepository;
 
 	@Autowired
 	PasswordEncoder encoder;
@@ -74,39 +73,41 @@ public class AuthController {
 
 		// Create new user's account
 
-		UserLogin user = new UserLogin(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()));
+		User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()));
 
-		Set<String> strRoles = signUpRequest.getRole();
-		Set<RoleLogin> roles = new HashSet<>();
+		List<String> strRoles = signUpRequest.getRole();
+		List<Role> roles = new LinkedList<>();
 
+		
 		if (strRoles == null) {
-			RoleLogin userRole = roleRepository.findByName(ERole.ROLE_USER)
+			Role userRole = roleRepository.findByRole("user")
 					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 			roles.add(userRole);
 		} else {
 			strRoles.forEach(role -> {
 				switch (role) {
 				case "admin":
-					RoleLogin adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+					Role adminRole = roleRepository.findByRole("admin")
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 					roles.add(adminRole);
 
 					break;
 				case "mod":
-					RoleLogin modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
+					Role modRole = roleRepository.findByRole("mod")
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 					roles.add(modRole);
 
 					break;
 				default:
-					RoleLogin userRole = roleRepository.findByName(ERole.ROLE_USER)
+					Role userRole = roleRepository.findByRole(role)
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 					roles.add(userRole);
 				}
 			});
 		}
+		 
 
-		user.setRoles(roles);
+		//user.setRoles(strRoles);
 		userRepository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));

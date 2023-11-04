@@ -9,10 +9,11 @@ import com.tw.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
-	User findByUsername(String username);
+	Optional<User> findByUsername(String username);
 	
 	public Optional<User> findOneByUsername(String userName);
 
 	public User findOneById(Long id);
-
+	
+	 Boolean existsByUsername(String username);
 }

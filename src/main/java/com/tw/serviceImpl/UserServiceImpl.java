@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +54,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	PasswordEncoder encoder;
 
 	@Override
 	public Page<User> userList(Pageable pageable) {
@@ -78,7 +82,7 @@ public class UserServiceImpl implements UserService {
 		user.setName(dto.getName());
 		user.setMobile(dto.getMobile());
 		user.setEmail(dto.getEmail());
-		user.setPassword(dto.getPassword());
+		user.setPassword(encoder.encode(dto.getPassword()));
 		user.setCreated(Calendar.getInstance());
 		user.setModified(Calendar.getInstance());
 

@@ -52,8 +52,14 @@ public class User extends AbstractPersistable {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
-	@JoinColumn(name = "role_id") })
+			@JoinColumn(name = "role_id") })
 	@JsonIgnore
 	private List<Role> roles;
+
+	public User(String username, String password) {
+		super();
+		this.username = username;
+		this.password = password;
+	}
 
 }
