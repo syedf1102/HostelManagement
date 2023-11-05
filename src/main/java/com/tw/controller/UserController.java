@@ -53,20 +53,19 @@ public class UserController {
 	public ResponseEntity<?> deactivateUser(@PathVariable Long id) {
 		return userService.deactivateUser(id);
 	}
-
+	
+	//@PostAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	// @Operation(summary = "My endpoint", security = @SecurityRequirement(name =
 	// "bearerAuth"))
 	@PostMapping(value = "list")
-	@PostAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public ResponseEntity<?> listUser(@RequestBody UserSpecDto dto) {
 		return userService.listUser(dto);
 
 	}
 
-	// @Operation(summary = "Get a protected resource", description = "Retrieve a
-	// protected resource that requires Bearer Token (JWT) authentication.")
+	
 	// @SecurityRequirement(name = "Bearer Authentication")
-	// @GetMapping(value = "findAll")
+	@GetMapping(value = "findAll")
 	public ResponseEntity<?> findAll() {
 		return userService.findAll();
 

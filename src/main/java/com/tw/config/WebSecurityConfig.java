@@ -69,8 +69,6 @@ public class WebSecurityConfig {
 						 .requestMatchers("/swagger-resources/**").permitAll()
 						 .requestMatchers("/webjars/**").permitAll()
 						 .requestMatchers("/api/auth/**").permitAll()
-						 .requestMatchers("/api/test/**").permitAll()
-					//	 .requestMatchers("/rest/api/user/**").permitAll()
 						 .anyRequest().authenticated()
 	        );
 	    

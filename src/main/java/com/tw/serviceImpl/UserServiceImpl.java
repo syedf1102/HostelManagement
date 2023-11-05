@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 		user.setName(dto.getName());
 		user.setMobile(dto.getMobile());
 		user.setEmail(dto.getEmail());
-		user.setPassword(dto.getPassword());
+		user.setPassword(encoder.encode(dto.getPassword()));
 		List<Role> roles = roleRepository.findByRoleIn(Arrays.asList(dto.getRoles()));
 		user.setRoles(roles);
 
@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
 		logger.info("password :", dto.getPassword());
 		User user = userRepository.findOneById(dto.getId());
 
-		user.setPassword(dto.getPassword());
+		user.setPassword(encoder.encode(dto.getPassword()));
 		userRepository.save(user);
 		return Response.build(Code.ACCEPTED, Messages.RESET_PASSWORD, user);
 	}
